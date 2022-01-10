@@ -17,7 +17,7 @@ let resetPush = Number(localStorage.getItem('resetPush'));
 let startPressed = Number(localStorage.getItem('startPressed'));
 let wasClicked = false;
 let timeout;
-
+let startWasClicked = Number(localStorage.getItem('startWasClickedLocal'));
 class App extends Component {
 
     state = {
@@ -45,17 +45,27 @@ refreshPage = () => {
         this.timer(e)
     }
     onPause=(e)=>{
+        startWasClicked = 0
+        localStorage.setItem('startWasClickedLocal', (0))
         localStorage.setItem('resetPush',0)
         window.location.reload(false);
     }
     onReset=(e)=>{
-       localStorage.setItem('resetPush',1)
+        startWasClicked = 1
+        localStorage.setItem('startWasClickedLocal', (1))
+       localStorage.setItem('resetPush',0)
         localStorage.setItem('timeLocal', (0));
         localStorage.setItem('MMLocal', (0));
         localStorage.setItem('HHLocal', (0));
         window.location.reload(false);
     }
-
+    onResetresetPush=(e)=>{
+        localStorage.setItem('resetPush',1)
+        localStorage.setItem('timeLocal', (0));
+        localStorage.setItem('MMLocal', (0));
+        localStorage.setItem('HHLocal', (0));
+        window.location.reload(false);
+    }
 
     componentDidMount() {
         (time===60)?(time=0, this.refreshPage()):null;
@@ -80,13 +90,26 @@ this.onPause(e)
         wasClicked = false;
     }, 300);
 }
+onStartStop=(e)=>{
+        if(startWasClicked===1) {
+            this.onResetresetPush(e)
+            startWasClicked = 0
+            localStorage.setItem('startWasClickedLocal', (0))
+        } else {
+            this.onStart(e)
+           startWasClicked =1
+            localStorage.setItem('startWasClickedLocal', (1))
+        }
+
+}
+
 
 render() {
     return (
       <div className="App">
 
           <Count data={time} HHMM={HH} MMH={MM}/>
-        <button onClick={this.onStart}>Start</button><button onClick={this.onPauseDouble}>Wait</button>
+        <button onClick={this.onStartStop}>Start/Stop</button><button onClick={this.onPauseDouble}>Wait</button>
           <button onClick={this.onReset}>Reset</button>
       </div>
     );
