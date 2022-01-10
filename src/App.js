@@ -15,6 +15,8 @@ console.log("MM"+MM);
 let HH=localStorage.getItem('HHLocal');
 let resetPush = Number(localStorage.getItem('resetPush'));
 let startPressed = Number(localStorage.getItem('startPressed'));
+let wasClicked = false;
+let timeout;
 
 class App extends Component {
 
@@ -63,14 +65,28 @@ refreshPage = () => {
         ((MM === 0)&&(resetPush===0)) ? this.timer() : null;
 
     }
+onPauseDouble=(e)=>{
+    if(wasClicked) {
+        wasClicked = false;
+        clearTimeout(timeout);
+this.onPause(e)
+        // dbl-click
 
+        return;
+    }
+
+    wasClicked = true;
+    timeout = setTimeout(() => {
+        wasClicked = false;
+    }, 300);
+}
 
 render() {
     return (
       <div className="App">
 
           <Count data={time} HHMM={HH} MMH={MM}/>
-        <button onClick={this.onStart}>Start</button><button onDoubleClick={this.onPause}>Pause</button>
+        <button onClick={this.onStart}>Start</button><button onClick={this.onPauseDouble}>Wait</button>
           <button onClick={this.onReset}>Reset</button>
       </div>
     );
